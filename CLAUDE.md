@@ -1,4 +1,4 @@
-# talos-dns-opnsense
+# Traefik to OPNsense Unbound
 
 Kubernetes controller that watches Traefik `IngressRoute` CRDs and syncs hostnames into OPNsense Unbound DNS as host overrides. All records point to a single configurable IP (the Traefik load balancer VIP).
 
@@ -37,14 +37,14 @@ go test ./...
 go build -o manager ./cmd
 
 # Build container
-docker build -t talos-dns-opnsense .
+docker build -t traefik-to-opnsense-unbound .
 ```
 
 ## Deploy
 
 ```bash
 # Create the secret first
-kubectl -n talos-dns-opnsense create secret generic opnsense-creds \
+kubectl -n traefik-to-opnsense-unbound create secret generic opnsense-creds \
   --from-literal=api-key=YOUR_KEY \
   --from-literal=api-secret=YOUR_SECRET
 
@@ -52,11 +52,9 @@ kubectl -n talos-dns-opnsense create secret generic opnsense-creds \
 kubectl apply -f config/deploy.yaml
 ```
 
-The manifest is also referenced from `~/repositories/d90-talos`.
-
 ## How it works
 
 1. Controller watches all `IngressRoute` resources cluster-wide
 2. On add/update: parses `Host()` rules from `spec.routes[].match`, diffs against existing OPNsense overrides for this resource, adds/removes as needed, then calls `reconfigure`
 3. On delete: removes all overrides tagged with this resource's namespace/name, then removes the finalizer
-4. Ownership is tracked via the `description` field in OPNsense: `talos-dns-opnsense:namespace/name`
+4. Ownership is tracked via the `description` field in OPNsense: `traefik-to-opnsense-unbound:namespace/name`
