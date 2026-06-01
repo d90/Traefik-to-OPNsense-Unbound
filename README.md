@@ -30,10 +30,6 @@ All configuration is via environment variables:
 
 ## Deployment
 
-This controller is deployed into a Talos cluster via Flux CD. Manifests live in [d90-talos](https://github.com/d90/d90-talos) under `home/apps/talos-dns-opnsense/`. The OPNsense credentials are stored as a SOPS-encrypted secret (age).
-
-To deploy to a different cluster:
-
 ```bash
 # Create the namespace and credentials secret
 kubectl create namespace talos-dns-opnsense
@@ -45,6 +41,10 @@ kubectl -n talos-dns-opnsense create secret generic opnsense-creds \
 kubectl apply -f config/deploy.yaml
 ```
 
+### Flux CD / GitOps
+
+If you manage your cluster with Flux, copy `config/deploy.yaml` into your repo split into separate files (rbac, deployment, secret) and add a `kustomization.yaml` referencing them. Encrypt the secret with SOPS before committing.
+
 ## Development
 
 ```bash
@@ -53,4 +53,11 @@ go test ./...
 go build -o manager ./cmd
 ```
 
-Container images are published to `ghcr.io/d90/talos-dns-opnsense` via GitHub Actions on every push to `main`. Tagged releases (e.g. `git tag v1.0.0 && git push --tags`) produce versioned images.
+To build and push your own image:
+
+```bash
+docker build -t ghcr.io/YOUR_USER/talos-dns-opnsense:latest .
+docker push ghcr.io/YOUR_USER/talos-dns-opnsense:latest
+```
+
+A GitHub Actions workflow is included at `.github/workflows/build.yml` that builds and publishes to GHCR automatically on push to `main` and on version tags.
