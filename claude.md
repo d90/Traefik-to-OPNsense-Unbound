@@ -1,1 +1,0 @@
-THis project goal is to read the ingressroutes in my talos cluster and automatically deploy them to opnsense unbound. This should be set up as a deployable container to my talos cluster, which will be put in a manifest in ~/repositories/d90-talos 
