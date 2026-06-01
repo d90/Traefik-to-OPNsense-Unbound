@@ -1,4 +1,4 @@
-module github.com/d90/talos-dns-opnsense
+module github.com/d90/traefik-to-opnsense-unbound
 
 go 1.23
 

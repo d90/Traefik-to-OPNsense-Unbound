@@ -10,14 +10,15 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	"github.com/d90/talos-dns-opnsense/internal/opnsense"
-	"github.com/d90/talos-dns-opnsense/internal/parser"
-	"github.com/d90/talos-dns-opnsense/internal/types"
+	"github.com/d90/traefik-to-opnsense-unbound/internal/opnsense"
+	"github.com/d90/traefik-to-opnsense-unbound/internal/parser"
+	"github.com/d90/traefik-to-opnsense-unbound/internal/types"
 )
 
 const (
-	finalizer  = "dns.talos/finalizer"
-	descPrefix = "talos-dns-opnsense:"
+	finalizer    = "traefik-unbound/finalizer"
+	oldFinalizer = "dns.talos/finalizer" // migration: remove if present
+	descPrefix   = "traefik-to-opnsense-unbound:"
 )
 
 type IngressRouteReconciler struct {
@@ -44,11 +45,19 @@ func (r *IngressRouteReconciler) Reconcile(ctx context.Context, req ctrl.Request
 				return ctrl.Result{}, err
 			}
 			controllerutil.RemoveFinalizer(&ir, finalizer)
-			if err := r.Update(ctx, &ir); err != nil {
-				return ctrl.Result{}, err
-			}
+		}
+		controllerutil.RemoveFinalizer(&ir, oldFinalizer)
+		if err := r.Update(ctx, &ir); err != nil {
+			return ctrl.Result{}, err
 		}
 		return ctrl.Result{}, nil
+	}
+
+	// Migrate: swap old finalizer for new one in a single update.
+	if controllerutil.ContainsFinalizer(&ir, oldFinalizer) {
+		controllerutil.RemoveFinalizer(&ir, oldFinalizer)
+		controllerutil.AddFinalizer(&ir, finalizer)
+		return ctrl.Result{}, r.Update(ctx, &ir)
 	}
 
 	if !controllerutil.ContainsFinalizer(&ir, finalizer) {

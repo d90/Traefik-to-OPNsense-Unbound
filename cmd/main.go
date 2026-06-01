@@ -7,9 +7,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	"github.com/d90/talos-dns-opnsense/internal/controller"
-	"github.com/d90/talos-dns-opnsense/internal/opnsense"
-	"github.com/d90/talos-dns-opnsense/internal/types"
+	"github.com/d90/traefik-to-opnsense-unbound/internal/controller"
+	"github.com/d90/traefik-to-opnsense-unbound/internal/opnsense"
+	"github.com/d90/traefik-to-opnsense-unbound/internal/types"
 )
 
 var scheme = runtime.NewScheme()

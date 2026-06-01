@@ -2,18 +2,18 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: talos-dns-opnsense
+  name: traefik-unbound
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: talos-dns-opnsense
-  namespace: talos-dns-opnsense
+  name: traefik-unbound
+  namespace: traefik-unbound
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: talos-dns-opnsense
+  name: traefik-unbound
 rules:
   - apiGroups: ["traefik.io"]
     resources: ["ingressroutes"]
@@ -25,25 +25,25 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: talos-dns-opnsense
+  name: traefik-unbound
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: talos-dns-opnsense
+  name: traefik-unbound
 subjects:
   - kind: ServiceAccount
-    name: talos-dns-opnsense
-    namespace: talos-dns-opnsense
+    name: traefik-unbound
+    namespace: traefik-unbound
 ---
 # Create this secret with your actual credentials before deploying:
-#   kubectl -n talos-dns-opnsense create secret generic opnsense-creds \
+#   kubectl -n traefik-unbound create secret generic opnsense-creds \
 #     --from-literal=api-key=YOUR_KEY \
 #     --from-literal=api-secret=YOUR_SECRET
 apiVersion: v1
 kind: Secret
 metadata:
   name: opnsense-creds
-  namespace: talos-dns-opnsense
+  namespace: traefik-unbound
 type: Opaque
 stringData:
   api-key: "REPLACE_ME"
@@ -52,25 +52,25 @@ stringData:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: talos-dns-opnsense
-  namespace: talos-dns-opnsense
+  name: traefik-unbound
+  namespace: traefik-unbound
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: talos-dns-opnsense
+      app: traefik-unbound
   template:
     metadata:
       labels:
-        app: talos-dns-opnsense
+        app: traefik-unbound
     spec:
-      serviceAccountName: talos-dns-opnsense
+      serviceAccountName: traefik-unbound
       securityContext:
         runAsNonRoot: true
         runAsUser: 65532
       containers:
         - name: manager
-          image: ghcr.io/d90/talos-dns-opnsense:latest
+          image: ghcr.io/d90/traefik-to-opnsense-unbound:latest
           env:
             - name: OPNSENSE_URL
               value: "https://10.10.10.1"  # replace with your OPNsense address
