@@ -73,9 +73,9 @@ spec:
           image: ghcr.io/d90/talos-dns-opnsense:latest
           env:
             - name: OPNSENSE_URL
-              value: "https://192.168.1.1"  # replace with your OPNsense address
+              value: "https://10.10.10.1"  # replace with your OPNsense address
             - name: TARGET_IP
-              value: "192.168.1.100"        # replace with your Traefik LB VIP
+              value: "10.10.100.101"        # replace with your Traefik LB VIP
             - name: TLS_SKIP_VERIFY
               value: "false"
             - name: OPNSENSE_API_KEY
