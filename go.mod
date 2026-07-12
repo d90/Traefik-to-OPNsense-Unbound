@@ -3,7 +3,7 @@ module github.com/d90/traefik-to-opnsense-unbound
 go 1.23
 
 require (
-	github.com/go-logr/logr v1.4.2
+	github.com/go-logr/logr v1.4.3
 	k8s.io/apimachinery v0.31.0
 	sigs.k8s.io/controller-runtime v0.19.0
 )
