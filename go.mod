@@ -1,6 +1,6 @@
 module github.com/d90/traefik-to-opnsense-unbound
 
-go 1.23
+go 1.26
 
 require (
 	github.com/go-logr/logr v1.4.3

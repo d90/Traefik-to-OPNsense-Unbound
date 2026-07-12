@@ -19,8 +19,10 @@ jobs:
           target-branch: main
 
       - name: Enable auto-merge for release PR
-        if: steps.release.outputs.pr
-        run: gh pr merge --auto --squash "$PR_NUMBER"
+        if: steps.release.outputs.pr != ''
         env:
-          PR_NUMBER: ${{ fromJSON(steps.release.outputs.pr).number }}
+          PR_JSON: ${{ steps.release.outputs.pr }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number=$(echo "$PR_JSON" | jq -r .number)
+          gh pr merge --auto --squash "$pr_number"
