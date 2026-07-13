@@ -17,12 +17,13 @@ jobs:
         with:
           release-type: go
           target-branch: main
+          token: ${{ secrets.GH_PAT }}
 
       - name: Enable auto-merge for release PR
         if: steps.release.outputs.pr != ''
         env:
           PR_JSON: ${{ steps.release.outputs.pr }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           pr_number=$(echo "$PR_JSON" | jq -r .number)
           gh pr merge --auto --squash "$pr_number"
