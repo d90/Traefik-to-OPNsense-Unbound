@@ -18,7 +18,7 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v7.0.0
 
       - name: Log in to GHCR
         if: github.event_name != 'pull_request'
@@ -30,7 +30,7 @@ jobs:
 
       - name: Extract metadata
         id: meta
-        uses: docker/metadata-action@v5.6.1
+        uses: docker/metadata-action@v6.2.0
         with:
           images: ${{ env.IMAGE }}
           tags: |
@@ -40,7 +40,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push
-        uses: docker/build-push-action@v6.16.0
+        uses: docker/build-push-action@v7.3.0
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
